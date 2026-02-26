@@ -1,12 +1,14 @@
 package com.edutech.progressive.service.impl;
 
+import com.edutech.progressive.entity.Student;
+import com.edutech.progressive.service.StudentService;
+import org.springframework.stereotype.Service;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.edutech.progressive.entity.Student;
-import com.edutech.progressive.service.StudentService;
-
+@Service
 public class StudentServiceImplArraylist implements StudentService {
 
     private static List<Student> studentList = new ArrayList<>();
@@ -22,7 +24,7 @@ public class StudentServiceImplArraylist implements StudentService {
         try {
             return sdf.parse(value);
         } catch (ParseException e) {
-            return null; 
+            return null;
         }
     }
 
@@ -49,8 +51,7 @@ public class StudentServiceImplArraylist implements StudentService {
     public void emptyArrayList() {
         studentList = new ArrayList<>();
     }
-
-
+    
     @Override
     public void updateStudent(Student student) {
         if (student == null) return;
