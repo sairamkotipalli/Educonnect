@@ -1,6 +1,7 @@
 package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Student;
+import com.edutech.progressive.exception.StudentAlreadyExistsException;
 import com.edutech.progressive.service.impl.StudentServiceImplArraylist;
 import com.edutech.progressive.service.impl.StudentServiceImplJpa;
 import org.springframework.http.ResponseEntity;
@@ -24,40 +25,56 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
-        return ResponseEntity.ok(studentServiceJpa.getAllStudents());
+        try {
+            return ResponseEntity.ok(studentServiceJpa.getAllStudents());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @GetMapping("/{studentId}")
     public ResponseEntity<Student> getStudentById(@PathVariable int studentId) {
-        Student s = studentServiceJpa.getStudentById(studentId);
-        return (s == null) ? ResponseEntity.notFound().build() : ResponseEntity.ok(s);
+        try {
+            Student s = studentServiceJpa.getStudentById(studentId);
+            return ResponseEntity.ok(s);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PostMapping
     public ResponseEntity<Integer> addStudent(@RequestBody Student student) {
-        Integer id = studentServiceJpa.addStudent(student);
-        return ResponseEntity.created(URI.create("/student/" + id)).body(id);
+        try {
+            Integer id = studentServiceJpa.addStudent(student);
+            return ResponseEntity.created(URI.create("/student/" + id)).body(id);
+        } catch (StudentAlreadyExistsException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PutMapping("/{studentId}")
     public ResponseEntity<Void> updateStudent(@PathVariable int studentId, @RequestBody Student student) {
-        student.setStudentId(studentId);
-
-        if (studentServiceJpa.getStudentById(studentId) == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            student.setStudentId(studentId);
+            studentServiceJpa.updateStudent(student);
+            return ResponseEntity.ok().build();
+        } catch (StudentAlreadyExistsException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
-
-        studentServiceJpa.updateStudent(student);
-        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{studentId}")
     public ResponseEntity<Void> deleteStudent(@PathVariable int studentId) {
-        if (studentServiceJpa.getStudentById(studentId) == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            studentServiceJpa.deleteStudent(studentId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
-        studentServiceJpa.deleteStudent(studentId);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/fromArrayList")
@@ -65,14 +82,14 @@ public class StudentController {
         return ResponseEntity.ok(studentServiceArrayList.getAllStudents());
     }
 
-    @GetMapping("/fromArrayList/sorted")
-    public ResponseEntity<List<Student>> getAllStudentSortedByNameFromArrayList() {
-        return ResponseEntity.ok(studentServiceArrayList.getAllStudentSortedByName());
-    }
-
     @PostMapping("/toArrayList")
     public ResponseEntity<Integer> addStudentToArrayList(@RequestBody Student student) {
         Integer size = studentServiceArrayList.addStudent(student);
         return ResponseEntity.status(201).body(size);
+    }
+
+    @GetMapping("/fromArrayList/sorted")
+    public ResponseEntity<List<Student>> getAllStudentSortedByNameFromArrayList() {
+        return ResponseEntity.ok(studentServiceArrayList.getAllStudentSortedByName());
     }
 }
