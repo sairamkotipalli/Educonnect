@@ -3,6 +3,7 @@ package com.edutech.progressive.service.impl;
 import com.edutech.progressive.dto.StudentDTO;
 import com.edutech.progressive.entity.Student;
 import com.edutech.progressive.exception.StudentAlreadyExistsException;
+import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.repository.StudentRepository;
 import com.edutech.progressive.service.StudentService;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,16 @@ import java.util.List;
 public class StudentServiceImplJpa implements StudentService {
 
     private final StudentRepository studentRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
-    public StudentServiceImplJpa(StudentRepository studentRepository) {
+    public StudentServiceImplJpa(StudentRepository studentRepository,
+                                 EnrollmentRepository enrollmentRepository) {
         this.studentRepository = studentRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public List<Student> getAllStudents() throws Exception {
         return studentRepository.findAll();
     }
@@ -39,8 +43,8 @@ public class StudentServiceImplJpa implements StudentService {
         return saved.getStudentId();
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public List<Student> getAllStudentSortedByName() throws Exception {
         List<Student> list = studentRepository.findAll();
         list.sort(Comparator.comparing(
@@ -69,11 +73,12 @@ public class StudentServiceImplJpa implements StudentService {
         if (!studentRepository.existsById(studentId)) {
             throw new IllegalArgumentException("Student not found with id: " + studentId);
         }
+        enrollmentRepository.deleteByStudentId(studentId);
         studentRepository.deleteById(studentId);
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Student getStudentById(int studentId) throws Exception {
         return studentRepository.findById(studentId).orElse(null);
     }

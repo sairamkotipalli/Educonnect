@@ -1,8 +1,10 @@
+
 package com.edutech.progressive.service.impl;
 
 import com.edutech.progressive.entity.Teacher;
 import com.edutech.progressive.exception.TeacherAlreadyExistsException;
 import com.edutech.progressive.repository.CourseRepository;
+import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.repository.TeacherRepository;
 import com.edutech.progressive.service.TeacherService;
 import org.springframework.stereotype.Service;
@@ -17,14 +19,18 @@ public class TeacherServiceImplJpa implements TeacherService {
 
     private final TeacherRepository teacherRepository;
     private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
-    public TeacherServiceImplJpa(TeacherRepository teacherRepository, CourseRepository courseRepository) {
+    public TeacherServiceImplJpa(TeacherRepository teacherRepository,
+                                 CourseRepository courseRepository,
+                                 EnrollmentRepository enrollmentRepository) {
         this.teacherRepository = teacherRepository;
         this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public List<Teacher> getAllTeachers() throws Exception {
         return teacherRepository.findAll();
     }
@@ -41,8 +47,8 @@ public class TeacherServiceImplJpa implements TeacherService {
         return saved.getTeacherId();
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public List<Teacher> getTeacherSortedByExperience() throws Exception {
         List<Teacher> list = teacherRepository.findAll();
         list.sort(Comparator.comparingInt(Teacher::getYearsOfExperience));
@@ -68,12 +74,13 @@ public class TeacherServiceImplJpa implements TeacherService {
         if (!teacherRepository.existsById(teacherId)) {
             throw new IllegalArgumentException("Teacher not found with id: " + teacherId);
         }
+        enrollmentRepository.deleteByTeacherId(teacherId);
         courseRepository.deleteByTeacherId(teacherId);
         teacherRepository.deleteById(teacherId);
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Teacher getTeacherById(int teacherId) throws Exception {
         return teacherRepository.findById(teacherId).orElse(null);
     }

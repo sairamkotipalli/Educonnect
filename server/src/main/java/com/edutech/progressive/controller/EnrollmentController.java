@@ -1,34 +1,82 @@
 package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Enrollment;
+import com.edutech.progressive.service.EnrollmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/enrollment")
 public class EnrollmentController {
 
+    private final EnrollmentService enrollmentService;
+
+    public EnrollmentController(EnrollmentService enrollmentService) {
+        this.enrollmentService = enrollmentService;
+    }
+
+    @GetMapping
     public ResponseEntity<List<Enrollment>> getAllEnrollments() {
-        return null;
+        try {
+            return ResponseEntity.ok(enrollmentService.getAllEnrollments());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
-    public ResponseEntity<Integer> createEnrollment(Enrollment enrollment) {
-        return null;
+    @PostMapping
+    public ResponseEntity<Integer> createEnrollment(@RequestBody Enrollment enrollment) {
+        try {
+            int id = enrollmentService.createEnrollment(enrollment);
+            return ResponseEntity.status(201).body(id);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
-    public ResponseEntity<Void> updateEnrollment(int enrollmentId, Enrollment enrollment) {
-        return null;
+    @PutMapping("/{enrollmentId}")
+    public ResponseEntity<Void> updateEnrollment(@PathVariable int enrollmentId, @RequestBody Enrollment enrollment) {
+        try {
+            enrollment.setEnrollmentId(enrollmentId);
+            enrollmentService.updateEnrollment(enrollment);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
-    public ResponseEntity<Enrollment> getEnrollmentById(int enrollmentId) {
-        return null;
+    @GetMapping("/{enrollmentId}")
+    public ResponseEntity<Enrollment> getEnrollmentById(@PathVariable int enrollmentId) {
+        try {
+            return ResponseEntity.ok(enrollmentService.getEnrollmentById(enrollmentId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
-    public ResponseEntity<List<Enrollment>> getAllEnrollmentsByStudent(int studentId) {
-        return null;
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<Enrollment>> getAllEnrollmentsByStudent(@PathVariable int studentId) {
+        try {
+            return ResponseEntity.ok(enrollmentService.getAllEnrollmentsByStudent(studentId));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
-    public ResponseEntity<List<Enrollment>> getAllEnrollmentsByCourse(int courseId) {
-        return null;
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<Enrollment>> getAllEnrollmentsByCourse(@PathVariable int courseId) {
+        try {
+            return ResponseEntity.ok(enrollmentService.getAllEnrollmentsByCourse(courseId));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
-
 }

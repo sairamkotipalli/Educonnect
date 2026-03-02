@@ -4,6 +4,7 @@ import com.edutech.progressive.entity.Course;
 import com.edutech.progressive.exception.CourseAlreadyExistsException;
 import com.edutech.progressive.exception.CourseNotFoundException;
 import com.edutech.progressive.repository.CourseRepository;
+import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.service.CourseService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,19 +16,22 @@ import java.util.List;
 public class CourseServiceImplJpa implements CourseService {
 
     private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
-    public CourseServiceImplJpa(CourseRepository courseRepository) {
+    public CourseServiceImplJpa(CourseRepository courseRepository,
+                                EnrollmentRepository enrollmentRepository) {
         this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public List<Course> getAllCourses() throws Exception {
         return courseRepository.findAll();
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Course getCourseById(int courseId) throws Exception {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new CourseNotFoundException("Course not found with id: " + courseId));
@@ -38,8 +42,7 @@ public class CourseServiceImplJpa implements CourseService {
         if (course.getCourseName() == null || course.getCourseName().trim().isEmpty()) {
             throw new IllegalArgumentException("Course name is required");
         }
-        Course existing = courseRepository.findByCourseName(course.getCourseName());
-        if (existing != null) {
+        if (courseRepository.findByCourseName(course.getCourseName()) != null) {
             throw new CourseAlreadyExistsException("Course already exists with name: " + course.getCourseName());
         }
         Course saved = courseRepository.save(course);
@@ -65,11 +68,12 @@ public class CourseServiceImplJpa implements CourseService {
         if (!courseRepository.existsById(courseId)) {
             throw new CourseNotFoundException("Course not found with id: " + courseId);
         }
+        enrollmentRepository.deleteByCourseId(courseId);
         courseRepository.deleteById(courseId);
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public List<Course> getAllCourseByTeacherId(int teacherId) {
         return courseRepository.findAllByTeacherId(teacherId);
     }
