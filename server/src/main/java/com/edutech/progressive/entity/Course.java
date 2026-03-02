@@ -1,5 +1,7 @@
 package com.edutech.progressive.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -21,6 +23,7 @@ public class Course implements Serializable {
     @Column(name = "teacher_id")
     private int teacherId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
     private Teacher teacher;
@@ -38,12 +41,11 @@ public class Course implements Serializable {
     public String getCourseName() { return courseName; }
     public String getDescription() { return description; }
     public int getTeacherId() { return teacherId; }
+    public Teacher getTeacher() { return teacher; }
 
     public void setCourseId(int courseId) { this.courseId = courseId; }
     public void setCourseName(String courseName) { this.courseName = courseName; }
     public void setDescription(String description) { this.description = description; }
     public void setTeacherId(int teacherId) { this.teacherId = teacherId; }
-
-    public Teacher getTeacher() { return teacher; }
     public void setTeacher(Teacher teacher) { this.teacher = teacher; }
 }
