@@ -1,5 +1,7 @@
+
 package com.edutech.progressive.controller;
 
+import com.edutech.progressive.dto.StudentDTO;
 import com.edutech.progressive.entity.Student;
 import com.edutech.progressive.exception.StudentAlreadyExistsException;
 import com.edutech.progressive.service.impl.StudentServiceImplArraylist;
@@ -55,10 +57,10 @@ public class StudentController {
     }
 
     @PutMapping("/{studentId}")
-    public ResponseEntity<Void> updateStudent(@PathVariable int studentId, @RequestBody Student student) {
+    public ResponseEntity<Void> updateStudent(@PathVariable int studentId, @RequestBody StudentDTO student) {
         try {
             student.setStudentId(studentId);
-            studentServiceJpa.updateStudent(student);
+            studentServiceJpa.modifyStudentDetails(student);
             return ResponseEntity.ok().build();
         } catch (StudentAlreadyExistsException | IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -66,6 +68,8 @@ public class StudentController {
             return ResponseEntity.status(500).build();
         }
     }
+
+
 
     @DeleteMapping("/{studentId}")
     public ResponseEntity<Void> deleteStudent(@PathVariable int studentId) {

@@ -3,6 +3,7 @@ package com.edutech.progressive.service.impl;
 import com.edutech.progressive.entity.Course;
 import com.edutech.progressive.exception.CourseAlreadyExistsException;
 import com.edutech.progressive.exception.CourseNotFoundException;
+import com.edutech.progressive.repository.AttendanceRepository;
 import com.edutech.progressive.repository.CourseRepository;
 import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.service.CourseService;
@@ -17,21 +18,24 @@ public class CourseServiceImplJpa implements CourseService {
 
     private final CourseRepository courseRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final AttendanceRepository attendanceRepository;
 
     public CourseServiceImplJpa(CourseRepository courseRepository,
-                                EnrollmentRepository enrollmentRepository) {
+                                EnrollmentRepository enrollmentRepository,
+                                AttendanceRepository attendanceRepository) {
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<Course> getAllCourses() throws Exception {
         return courseRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public Course getCourseById(int courseId) throws Exception {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new CourseNotFoundException("Course not found with id: " + courseId));
@@ -68,12 +72,13 @@ public class CourseServiceImplJpa implements CourseService {
         if (!courseRepository.existsById(courseId)) {
             throw new CourseNotFoundException("Course not found with id: " + courseId);
         }
+        attendanceRepository.deleteByCourse_CourseId(courseId);
         enrollmentRepository.deleteByCourseId(courseId);
         courseRepository.deleteById(courseId);
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<Course> getAllCourseByTeacherId(int teacherId) {
         return courseRepository.findAllByTeacherId(teacherId);
     }

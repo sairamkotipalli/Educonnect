@@ -1,12 +1,16 @@
 
 package com.edutech.progressive.service.impl;
 
+import com.edutech.progressive.dto.TeacherDTO;
 import com.edutech.progressive.entity.Teacher;
+import com.edutech.progressive.entity.User;
 import com.edutech.progressive.exception.TeacherAlreadyExistsException;
 import com.edutech.progressive.repository.CourseRepository;
 import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.repository.TeacherRepository;
+import com.edutech.progressive.repository.UserRepository;
 import com.edutech.progressive.service.TeacherService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +24,19 @@ public class TeacherServiceImplJpa implements TeacherService {
     private final TeacherRepository teacherRepository;
     private final CourseRepository courseRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public TeacherServiceImplJpa(TeacherRepository teacherRepository,
                                  CourseRepository courseRepository,
-                                 EnrollmentRepository enrollmentRepository) {
+                                 EnrollmentRepository enrollmentRepository,
+                                 UserRepository userRepository,
+                                 PasswordEncoder passwordEncoder) {
         this.teacherRepository = teacherRepository;
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -74,14 +84,46 @@ public class TeacherServiceImplJpa implements TeacherService {
         if (!teacherRepository.existsById(teacherId)) {
             throw new IllegalArgumentException("Teacher not found with id: " + teacherId);
         }
-        enrollmentRepository.deleteByTeacherId(teacherId);
-        courseRepository.deleteByTeacherId(teacherId);
+        enrollmentRepository.deleteByTeacherId(teacherId);    // as per your schema; keep if correct
+        courseRepository.deleteByTeacherId(teacherId);        // idem
+        userRepository.deleteByTeacher_TeacherId(teacherId);  // <-- changed
         teacherRepository.deleteById(teacherId);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Teacher getTeacherById(int teacherId) throws Exception {
-        return teacherRepository.findById(teacherId).orElse(null);
+    public void modifyTeacherDetails(TeacherDTO teacherDTO) {
+        Teacher teacher = teacherRepository.findById(teacherDTO.getTeacherId())
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found with id: " + teacherDTO.getTeacherId()));
+
+        if (teacherDTO.getEmail() != null) {
+            Teacher exists = teacherRepository.findByEmail(teacherDTO.getEmail());
+            if (exists != null && exists.getTeacherId() != teacherDTO.getTeacherId()) {
+                throw new RuntimeException("Another teacher already exists with email: " + teacherDTO.getEmail());
+            }
+        }
+
+        teacher.setFullName(teacherDTO.getFullName());
+        teacher.setContactNumber(teacherDTO.getContactNumber());
+        teacher.setEmail(teacherDTO.getEmail());
+        teacher.setSubject(teacherDTO.getSubject());
+        teacher.setYearsOfExperience(teacherDTO.getYearsOfExperience() == null ? 0 : teacherDTO.getYearsOfExperience());
+        teacherRepository.save(teacher);
+
+        User user = userRepository.findByTeacher_TeacherId(teacherDTO.getTeacherId()); // <-- changed
+        if (user != null) {
+            if (teacherDTO.getUsername() != null) {
+                User byUsername = userRepository.findByUsername(teacherDTO.getUsername());
+                if (byUsername != null && byUsername.getUserId() != user.getUserId()) {
+                    throw new RuntimeException("Username already exists: " + teacherDTO.getUsername());
+                }
+                user.setUsername(teacherDTO.getUsername());
+            }
+            if (teacherDTO.getPassword() != null && !teacherDTO.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder.encode(teacherDTO.getPassword()));
+            }
+            userRepository.save(user);
+        }
     }
+
+
 }
+
