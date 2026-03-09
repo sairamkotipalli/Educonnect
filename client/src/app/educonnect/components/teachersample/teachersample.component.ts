@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Teacher } from '../../models/Teacher';
@@ -23,3 +24,10 @@ export class TeacherSampleComponent {
     console.log('yearsOfExperience:', this.teacher.yearsOfExperience);
   }
 }
+=======
+
+export class TeacherSampleComponent  {
+
+  
+}
+>>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc

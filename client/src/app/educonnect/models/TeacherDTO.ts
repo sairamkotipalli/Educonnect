@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export class TeacherDTO {
   teacherId: number;
   username: string;
@@ -17,4 +18,10 @@ export class TeacherDTO {
     this.specialty = specialty;
     this.yearsOfExperience = yearsOfExperience;
   }
+=======
+
+export class TeacherDTO {
+ 
+
+>>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc
 }

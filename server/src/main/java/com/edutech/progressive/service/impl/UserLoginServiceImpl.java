@@ -78,8 +78,12 @@ public class UserLoginServiceImpl implements UserDetailsService {
     }
 
     public User getUserDetails(int userId) {
+<<<<<<< HEAD
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+=======
+        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+>>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc
     }
 
     @Override
@@ -93,4 +97,8 @@ public class UserLoginServiceImpl implements UserDetailsService {
                 Collections.singleton(() -> "ROLE_" + role)
         );
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc

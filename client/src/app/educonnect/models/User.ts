@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export class User {
   userId: number;
   username: string;
@@ -13,4 +14,9 @@ export class User {
     this.studentId = studentId;
     this.teacherId = teacherId;
   }
+=======
+
+export class User {
+
+>>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc
 }

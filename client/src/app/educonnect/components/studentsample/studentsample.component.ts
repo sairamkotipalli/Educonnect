@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Student } from '../../models/Student';
@@ -23,3 +24,9 @@ export class StudentSampleComponent {
     console.log('address:', this.student.address);
   }
 }
+=======
+
+export class StudentSampleComponent {
+  
+}
+>>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc
