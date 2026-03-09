@@ -1,0 +1,34 @@
+const getVal = (id) => {
+  const el = typeof document !== 'undefined' ? document.getElementById(id) : null;
+  return el ? el.value : '';
+};
+
+const pickFirst = (ids) => {
+  for (const id of ids) {
+    const v = getVal(id);
+    if (v !== '') return v;
+  }
+  return '';
+};
+
+function login() {
+  const username = pickFirst(['loginUsername', 'username', 'login-username']);
+  const password = pickFirst(['loginPassword', 'password', 'login-password']);
+  console.log(`Login clicked. Username: ${username}, Password: ${password}`);
+}
+
+function register() {
+  const name = pickFirst(['regName', 'name', 'fullName', 'registerName']);
+  const email = pickFirst(['regEmail', 'email', 'registerEmail']);
+  const username = pickFirst(['regUsername', 'username', 'registerUsername']);
+  const password = pickFirst(['regPassword', 'password', 'registerPassword']);
+  console.log(`Register clicked. Name: ${name}, Email: ${email}, Username: ${username}, Password: ${password}`);
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { login, register };
+}
+if (typeof window !== 'undefined') {
+  window.login = login;
+  window.register = register;
+}

@@ -1,0 +1,10 @@
+<div class="student-card">
+  <h3>Student Details</h3>
+  <p><strong>Student ID:</strong> {{ student.studentId }}</p>
+  <p><strong>Full Name:</strong> {{ student.fullName }}</p>
+  <p><strong>Date of Birth:</strong> {{ student.dateOfBirth | date }}</p>
+  <p><strong>Contact Number:</strong> {{ student.contactNumber }}</p>
+  <p><strong>Email:</strong> {{ student.email }}</p>
+  <p><strong>Address:</strong> {{ student.address }}</p>
+  <button (click)="logStudentAttributes()">Log Student Attributes</button>
+</div>
