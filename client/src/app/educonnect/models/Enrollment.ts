@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export class Enrollment {
   enrollmentId: number;
   studentId: number;
@@ -17,10 +16,3 @@ export class Enrollment {
     console.log('enrollmentDate:', this.enrollmentDate);
   }
 }
-=======
-
-export class Enrollment {
-
-}
-
->>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc

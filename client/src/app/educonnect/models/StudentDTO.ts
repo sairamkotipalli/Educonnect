@@ -1,5 +1,4 @@
 export class StudentDTO {
-<<<<<<< HEAD
   studentId: number;
   username: string;
   password: string;
@@ -19,7 +18,3 @@ export class StudentDTO {
     this.address = address;
   }
 }
-=======
-
-}
->>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc

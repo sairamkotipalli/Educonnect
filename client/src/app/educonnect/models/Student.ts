@@ -1,5 +1,4 @@
 export class Student {
-<<<<<<< HEAD
   studentId: number;
   fullName: string;
   dateOfBirth: Date | null;
@@ -23,12 +22,3 @@ export class Student {
     console.log('address:', this.address);
   }
 }
-=======
-
-}
-
-
-
-
-
->>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc

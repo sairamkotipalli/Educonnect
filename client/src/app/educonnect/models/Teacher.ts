@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export class Teacher {
   teacherId: number;
   fullName: string;
@@ -22,9 +21,4 @@ export class Teacher {
     console.log('subject:', this.subject);
     console.log('yearsOfExperience:', this.yearsOfExperience);
   }
-=======
-
-export class Teacher {
-
->>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc
 }

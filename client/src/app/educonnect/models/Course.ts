@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export class Course {
   courseId: number;
   courseName: string;
@@ -16,9 +15,4 @@ export class Course {
     console.log('description:', this.description);
     console.log('teacherId:', this.teacherId);
   }
-=======
-
-export class Course {
-
->>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc
 }

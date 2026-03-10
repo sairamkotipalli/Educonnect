@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export class UserRegistrationDTO {
   username: string;
   password: string;
@@ -22,9 +21,4 @@ export class UserRegistrationDTO {
     this.dateOfBirth = dateOfBirth;
     this.address = address;
   }
-=======
-
-export class UserRegistrationDTO {
-
->>>>>>> d76e0db293a8626f50b912ae8482fe15a23e1abc
 }
